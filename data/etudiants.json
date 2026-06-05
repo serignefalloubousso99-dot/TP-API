@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "nom": "Bousso",
+    "prenom": "Fallou",
+    "email": "fallou@univ.sn",
+    "filiere": "Génie Logiciel",
+    "niveau": "Master 1",
+    "matricule": "M19990301"
+  },
+  {
+    "id": 3,
+    "nom": "Sarr",
+    "prenom": "Modou",
+    "email": "modou@univ.sn",
+    "filiere": "Informatique",
+    "niveau": "Licence 3",
+    "matricule": "M20260045"
+  }
+]
