@@ -8,6 +8,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // Aiguillage vers le fichier de routes
 app.use("/api/etudiants", require("./routes/etudiantRoutes"));
+app.use("/api/admins", require("./routes/adminRoutes"));
 
 // Lancement du serveur
 app.listen(port, () => {

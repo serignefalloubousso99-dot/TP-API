@@ -37,6 +37,14 @@ module.exports = {
                 return res.status(400).json({ message: "Veuillez remplir les champs obligatoires (nom, prenom, email, matricule)" });
             }
 
+            // Vérification de l'unicité (Email et Matricule)
+            const existeDeja = etudiants.find(e => e.email === email || e.matricule === matricule);
+            if (existeDeja) {
+                return res.status(400).json({ 
+                    message: "Un étudiant avec cet email ou ce matricule existe déjà" 
+                });
+            }
+
             // Création du nouvel étudiant avec un ID auto-incrémenté
             const nouvelEtudiant = {
                 id: etudiants.length > 0 ? etudiants[etudiants.length - 1].id + 1 : 1,
@@ -68,6 +76,19 @@ module.exports = {
 
             if (index === -1) {
                 return res.status(404).json({ message: "Étudiant non trouvé" });
+            }
+
+            const { email, matricule } = req.body;
+
+            // Vérification de l'unicité si l'email ou le matricule est modifié
+            const doublon = etudiants.find(e => 
+                e.id !== idRecherche && (e.email === email || e.matricule === matricule)
+            );
+
+            if (doublon) {
+                return res.status(400).json({ 
+                    message: "Cet email ou ce matricule est déjà utilisé par un autre étudiant" 
+                });
             }
 
             // On fusionne les anciennes données avec les nouvelles reçues dans le req.body
