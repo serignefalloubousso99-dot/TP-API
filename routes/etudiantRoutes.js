@@ -6,13 +6,14 @@ const {
     updateEtudiant, 
     deleteEtudiant 
 } = require("../controllers/etudiantController");
+const { protect } = require("../middlewares/authMiddleware");
 
-// Route pour récupérer tous les étudiants et en ajouter un
+// Route pour récupérer tous les étudiants (Public)
 router.get("/", getAllEtudiants);
-router.post("/", createEtudiant);
 
-// Route pour modifier et supprimer un étudiant via son ID dans l'URL
-router.put("/:id", updateEtudiant);
-router.delete("/:id", deleteEtudiant);
+// Routes protégées (Nécessitent un token)
+router.post("/", protect, createEtudiant);
+router.put("/:id", protect, updateEtudiant);
+router.delete("/:id", protect, deleteEtudiant);
 
 module.exports = router;

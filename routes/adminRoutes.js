@@ -5,13 +5,19 @@ const {
     createAdmin, 
     updateAdmin, 
     deleteAdmin,
-    loginAdmin
+    loginAdmin,
+    logoutAdmin
 } = require("../controllers/adminController");
+const { protect } = require("../middlewares/authMiddleware");
 
-router.get("/", getAllAdmins);
-router.post("/", createAdmin);
+// Routes publiques
 router.post("/login", loginAdmin);
-router.put("/:id", updateAdmin);
-router.delete("/:id", deleteAdmin);
+router.post("/logout", logoutAdmin);
+
+// Routes protégées
+router.get("/", protect, getAllAdmins);
+router.post("/", protect, createAdmin);
+router.put("/:id", protect, updateAdmin);
+router.delete("/:id", protect, deleteAdmin);
 
 module.exports = router;

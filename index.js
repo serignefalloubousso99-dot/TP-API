@@ -1,6 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 // Middlewares pour lire le JSON dans le corps des requêtes (req.body)
 app.use(express.json());
