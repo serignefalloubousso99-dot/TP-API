@@ -5,6 +5,7 @@
 const fs = require("fs");  // Manipulation de fichiers
 const path = require("path");  // Gestion des chemins
 const jwt = require("jsonwebtoken"); // Pour la gestion des tokens
+const bcrypt = require("bcryptjs"); // Pour le hachage des mots de passe
 
 // Fonction pour générer un JWT
 const generateToken = (id) => {
@@ -41,7 +42,20 @@ const ecrireFichierJSON = (data) => {
 module.exports = {
     // ========================================
     // 1️RÉCUPÉRER TOUS LES ADMINISTRATEURS (GET)
-    // Endpoint: GET http://localhost:5000/api/admins
+    /**
+     * @swagger
+     * /api/admins:
+     *   get:
+     *     summary: Récupérer la liste des administrateurs
+     *     tags: [Admins]
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: Liste des admins récupérée
+     *       401:
+     *         description: Non autorisé
+     */
     getAllAdmins: (req, res) => {
         try {
             // Lire tous les administrateurs depuis le fichier JSON
@@ -58,9 +72,34 @@ module.exports = {
 
     // ========================================
     // CRÉER UN NOUVEL ADMINISTRATEUR (POST)
-    // Endpoint: POST http://localhost:5000/api/admins
-
-    createAdmin: (req, res) => {
+    /**
+     * @swagger
+     * /api/admins:
+     *   post:
+     *     summary: Créer un nouvel administrateur
+     *     tags: [Admins]
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             required: [nom, prenom, email, password]
+     *             properties:
+     *               nom: {type: string}
+     *               prenom: {type: string}
+     *               tel: {type: string}
+     *               email: {type: string}
+     *               password: {type: string}
+     *     responses:
+     *       201:
+     *         description: Admin créé
+     *       400:
+     *         description: Données manquantes ou doublon
+     */
+    createAdmin: async (req, res) => {
         try {
             // Lire les administrateurs existants
             const admins = lireFichierJSON();
@@ -82,6 +121,9 @@ module.exports = {
             }
 
             // CRÉATION: Créer le nouvel administrateur
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+
             const nouvelAdmin = {
                 // Auto-incrémenter l'ID: prendre le dernier ID + 1, ou 1 si aucun admin
                 id: admins.length > 0 ? admins[admins.length - 1].id + 1 : 1,
@@ -89,7 +131,7 @@ module.exports = {
                 prenom,
                 tel,
                 email,
-                password
+                password: hashedPassword
             };
 
             // Ajouter le nouvel admin à la liste
@@ -107,8 +149,38 @@ module.exports = {
 
     // ========================================
     //MODIFIER UN ADMINISTRATEUR (PUT)
-    // Endpoint: PUT http://localhost:5000/api/admins/:id
-    updateAdmin: (req, res) => {
+    /**
+     * @swagger
+     * /api/admins/{id}:
+     *   put:
+     *     summary: Modifier un administrateur
+     *     tags: [Admins]
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: integer
+     *     requestBody:
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               nom: {type: string}
+     *               prenom: {type: string}
+     *               tel: {type: string}
+     *               email: {type: string}
+     *               password: {type: string}
+     *     responses:
+     *       200:
+     *         description: Admin modifié
+     *       404:
+     *         description: Admin non trouvé
+     */
+    updateAdmin: async (req, res) => {
         try {
             // Lire tous les administrateurs
             const admins = lireFichierJSON();
@@ -141,7 +213,15 @@ module.exports = {
 
             // MISE À JOUR: Fusionner les anciennes données avec les nouvelles
             // On garde l'ID (immuable) et on met à jour le reste avec req.body
-            admins[index] = { ...admins[index], ...req.body, id: idRecherche };
+            const updatedData = { ...req.body };
+
+            // Si un nouveau mot de passe est fourni, on le hache
+            if (updatedData.password) {
+                const salt = await bcrypt.genSalt(10);
+                updatedData.password = await bcrypt.hash(updatedData.password, salt);
+            }
+
+            admins[index] = { ...admins[index], ...updatedData, id: idRecherche };
             
             // Sauvegarder les changements dans le fichier
             ecrireFichierJSON(admins);
@@ -156,7 +236,26 @@ module.exports = {
 
     // ========================================
     //SUPPRIMER UN ADMINISTRATEUR (DELETE)
-    // Endpoint: DELETE http://localhost:5000/api/admins/:id
+    /**
+     * @swagger
+     * /api/admins/{id}:
+     *   delete:
+     *     summary: Supprimer un administrateur
+     *     tags: [Admins]
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: integer
+     *     responses:
+     *       200:
+     *         description: Admin supprimé
+     *       404:
+     *         description: Admin non trouvé
+     */
     deleteAdmin: (req, res) => {
         try {
             // Lire tous les administrateurs
@@ -183,10 +282,30 @@ module.exports = {
         }
     },
     // ========================================
-    //CONNEXION ADMINISTRATEUR (LOGIN) SPÉCIFIQUE AUX ADMINS
-    // Endpoint: POST http://localhost:5000/api/admins/login
-    // Body JSON attendu: { email, password }
-    loginAdmin: (req, res) => {
+    //CONNEXION ADMINISTRATEUR (LOGIN)
+    /**
+     * @swagger
+     * /api/admins/login:
+     *   post:
+     *     summary: Connexion administrateur
+     *     tags: [Auth]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             required: [email, password]
+     *             properties:
+     *               email: {type: string}
+     *               password: {type: string}
+     *     responses:
+     *       200:
+     *         description: Connexion réussie, renvoie le token
+     *       401:
+     *         description: Identifiants incorrects
+     */
+    loginAdmin: async (req, res) => {
         try {
             // Lire tous les administrateurs
             const admins = lireFichierJSON();
@@ -194,11 +313,11 @@ module.exports = {
             // Extraire l'email et le mot de passe du corps de la requête
             const { email, password } = req.body;
 
-            // AUTHENTIFICATION: Trouver un admin avec cet email ET ce mot de passe
-            const admin = admins.find(a => a.email === email && a.password === password);
+            // AUTHENTIFICATION: Trouver un admin avec cet email
+            const admin = admins.find(a => a.email === email);
 
-            // Vérifier que l'admin a été trouvé
-            if (!admin) {
+            // Vérifier que l'admin existe et que le mot de passe est correct
+            if (!admin || !(await bcrypt.compare(password, admin.password))) {
                 return res.status(401).json({ message: "Email ou mot de passe incorrect" });
             }
 
@@ -216,7 +335,20 @@ module.exports = {
 
     // ========================================
     // DÉCONNEXION (Côté serveur avec Blacklist)
-    // Endpoint: POST http://localhost:5000/api/admins/logout
+    /**
+     * @swagger
+     * /api/admins/logout:
+     *   post:
+     *     summary: Déconnexion administrateur (Révocation du token)
+     *     tags: [Auth]
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: Déconnexion réussie
+     *       400:
+     *         description: Token manquant
+     */
     logoutAdmin: (req, res) => {
         try {
             const authHeader = req.headers.authorization;

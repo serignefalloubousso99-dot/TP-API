@@ -16,6 +16,18 @@ const ecrireFichierJSON = (data) => {
 };
 
 // 1. LIRE TOUS LES ÉTUDIANTS (GET)
+/**
+ * @swagger
+ * /api/etudiants:
+ *   get:
+ *     summary: Récupérer la liste de tous les étudiants
+ *     tags: [Etudiants]
+ *     responses:
+ *       200:
+ *         description: Liste des étudiants récupérée avec succès
+ *       500:
+ *         description: Erreur serveur
+ */
 module.exports = {
     getAllEtudiants: (req, res) => {
         try {
@@ -27,6 +39,36 @@ module.exports = {
     },
 
     // 2. CRÉER UN ÉTUDIANT (POST)
+    /**
+     * @swagger
+     * /api/etudiants:
+     *   post:
+     *     summary: Créer un nouvel étudiant
+     *     tags: [Etudiants]
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             required: [nom, prenom, email, matricule]
+     *             properties:
+     *               nom: {type: string}
+     *               prenom: {type: string}
+     *               email: {type: string}
+     *               filiere: {type: string}
+     *               niveau: {type: string}
+     *               matricule: {type: string}
+     *     responses:
+     *       201:
+     *         description: Étudiant créé
+     *       400:
+     *         description: Données invalides ou doublon
+     *       401:
+     *         description: Non autorisé (token manquant ou invalide)
+     */
     createEtudiant: (req, res) => {
         try {
             const etudiants = lireFichierJSON();
@@ -66,6 +108,39 @@ module.exports = {
     },
 
     // 3. MODIFIER UN ÉTUDIANT (PUT)
+    /**
+     * @swagger
+     * /api/etudiants/{id}:
+     *   put:
+     *     summary: Modifier un étudiant existant
+     *     tags: [Etudiants]
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: integer
+     *         description: ID de l'étudiant
+     *     requestBody:
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               nom: {type: string}
+     *               prenom: {type: string}
+     *               email: {type: string}
+     *               filiere: {type: string}
+     *               niveau: {type: string}
+     *               matricule: {type: string}
+     *     responses:
+     *       200:
+     *         description: Étudiant modifié
+     *       404:
+     *         description: Étudiant non trouvé
+     */
     updateEtudiant: (req, res) => {
         try {
             const etudiants = lireFichierJSON();
@@ -103,6 +178,27 @@ module.exports = {
     },
 
     // 4. SUPPRIMER UN ÉTUDIANT (DELETE)
+    /**
+     * @swagger
+     * /api/etudiants/{id}:
+     *   delete:
+     *     summary: Supprimer un étudiant
+     *     tags: [Etudiants]
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: integer
+     *         description: ID de l'étudiant à supprimer
+     *     responses:
+     *       200:
+     *         description: Étudiant supprimé
+     *       404:
+     *         description: Étudiant non trouvé
+     */
     deleteEtudiant: (req, res) => {
         try {
             let etudiants = lireFichierJSON();

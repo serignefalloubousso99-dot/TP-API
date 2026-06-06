@@ -5,7 +5,7 @@
     "prenom": "Tidjan",
     "tel": "770970906",
     "email": "admin@fallou.com",
-    "password": "1234"
+    "password": "$2b$10$BZ4868JEXEqj8Qp9AIn.s.2CEUQOmdjsFXG7mEPAn.yKtNWFBYmFq"
   },
   {
     "id": 2,
@@ -13,7 +13,7 @@
     "prenom": "Fallou",
     "tel": "771711622",
     "email": "admin@bousso.com",
-    "password": "1234"
+    "password": "$2b$10$RRw4C.dN0NX5Kda1ebb3LO9ndv54Qdj9yTAhwzuJkItTkJPzIeiIW"
   },
   {
     "id": 3,
@@ -21,7 +21,7 @@
     "prenom": "Fatou",
     "tel": "783459087",
     "email": "admin@mbaye.com",
-    "password": "1234"
+    "password": "$2b$10$920HmTn51fA1.kre93W83uDyvDMHmosvWqlPU46TFYsfHzgK1vBqm"
   },
   {
     "id": 4,
@@ -29,7 +29,7 @@
     "prenom": "Adjima",
     "tel": "778346790",
     "email": "admin@lo.com",
-    "password": "1234"
+    "password": "$2b$10$pke51qCtEJuiwswnf2.rMOEZIad56beS60f4f1cPwSJOqnzqrBknq"
   },
   {
     "id": 5,
@@ -37,6 +37,6 @@
     "prenom": "Nogay",
     "tel": "771236749",
     "email": "admin@seck.com",
-    "password": "1234"
+    "password": "$2b$10$hrunreiFCIulLw1RdMtqPuvn5nsGBBFmjn6nb8eMZEn/nN4Sjldr."
   }
 ]
