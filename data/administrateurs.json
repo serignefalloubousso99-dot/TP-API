@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "id": 1,
+    "nom": "Toure",
+    "prenom": "Tidjan",
+    "tel": "770970906",
+    "email": "admin@fallou.com",
+    "password": "1234"
+  },
+  {
+    "id": 2,
+    "nom": "Bousso",
+    "prenom": "Fallou",
+    "tel": "771711622",
+    "email": "admin@bousso.com",
+    "password": "1234"
+  },
+  {
+    "id": 3,
+    "nom": "Mbaye",
+    "prenom": "Fatou",
+    "tel": "783459087",
+    "email": "admin@mbaye.com",
+    "password": "1234"
+  },
+  {
+    "id": 4,
+    "nom": "Lo",
+    "prenom": "Adjima",
+    "tel": "778346790",
+    "email": "admin@lo.com",
+    "password": "1234"
+  },
+  {
+    "id": 5,
+    "nom": "Seck",
+    "prenom": "Nogay",
+    "tel": "771236749",
+    "email": "admin@seck.com",
+    "password": "1234"
+  }
+]
